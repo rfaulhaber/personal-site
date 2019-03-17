@@ -1,0 +1,10 @@
+baseURL = "ryanfaulhaber.com"
+languageCode = "en-us"
+title = "Ryan Faulhaber"
+theme = "hugo-theme-basic"
+enableEmoji = true
+description = "Basic personal site theme styled with minimal tachyons, syntax highlighting, and blog series configuration."
+
+[[params.menu]]
+    name = "about"
+    url = "about/"
