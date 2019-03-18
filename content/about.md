@@ -8,9 +8,7 @@ Welcome to my site.
 
 I am a full-stack and mobile software developer based in Cleveland, Ohio. My 
 main interests are anything related to JavaScript, Go, and Rust. Additionally, 
-I am AWS certified.  
-
-`// TODO link to AWS certification!`
+I am [AWS certified](https://www.certmetrics.com/amazon/public/badge.aspx?i=2&t=c&d=2018-09-08&ci=AWS00490765).  
 
 I have experience writing apps using (but not limited to):
 
