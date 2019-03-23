@@ -16,8 +16,11 @@ I have experience writing apps using (but not limited to):
 - Android
 - AWS (mostly RDS, AppSync, and Lambda)
 
-Additionally, my GitHub is filled with projects written in the languages above.
+My GitHub is filled with various projects and experiments.
 
-This site is currently a work in progress and was generated using [Hugo](https://gohugo.io).
+This site was generated using [Hugo](https://gohugo.io).
 
-Please see my [GitHub](https://github.com/rfaulhaber) for more information.
+## Contact
+
+- [Email](mailto:faulhaberryan@gmail.com) ([GPG](/gpg1.txt))
+- [GitHub](https://github.com/rfaulhaber)
