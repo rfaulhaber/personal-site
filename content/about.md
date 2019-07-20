@@ -18,6 +18,11 @@ I have experience writing apps using (but not limited to):
 
 My GitHub is filled with various projects and experiments.
 
+**I am currently available for hire for freelancing projects.** Please note
+though that I do have a day job, and I must be able to work around that.
+So if you're looking for a driven and passionate developer for your project,
+please email me!
+
 This site was generated using [Hugo](https://gohugo.io).
 
 ## Contact
