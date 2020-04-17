@@ -2,6 +2,7 @@
 title: "About"
 date: 2019-03-17T14:26:03-04:00
 draft: false
+weight: 100
 ---
 
 Welcome to my site. 

@@ -1,17 +1,33 @@
 baseURL = "/"
 languageCode = "en-us"
 title = "Ryan Faulhaber"
-theme = "hugo-theme-basic"
+theme = "duotone-theme-hugo"
 enableEmoji = true
-description = "Basic personal site theme styled with minimal tachyons, syntax highlighting, and blog series configuration."
+description = "Site for Ryan Faulhaber"
 googleAnalytics = "UA-23680267-3"
 
-[[params.menu]]
-    name = "about"
-    url = "about/"
+[params]
+	theme = "sea"
+
+	[[menu]]
+		name = "about"
+		url = "about/"
+
+	[[menu]]
+		name = "resume"
+		url = "resume/"
 
 [privacy]
   [privacy.googleAnalytics]
     anonymizeIP = true
     respectDoNotTrack = true
     useSessionStorage = true
+
+[markup]
+  [markup.highlight]
+	lineNos = true
+    codeFences = false
+    lineNumbersInTable = true
+    noClasses = false
+    style = "solarized-dark"
+    tabWidth = 4
