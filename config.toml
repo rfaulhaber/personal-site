@@ -28,6 +28,6 @@ googleAnalytics = "UA-23680267-3"
 	lineNos = true
     codeFences = false
     lineNumbersInTable = true
-    noClasses = false
+    noClasses = true
     style = "solarized-dark"
     tabWidth = 4
