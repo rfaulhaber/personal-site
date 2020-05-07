@@ -1,0 +1,24 @@
+<html class="{{ .Site.Params.theme }}-theme">
+    {{partial "head.html" .}}
+    <body lang="{{ .Site.LanguageCode }}">
+		<nav class="sidebar-nav">
+			{{ $currentPage := . }}
+			{{ range .Site.Menus.header }}
+            <a class="nav-item" title="{{.Title}}" href="{{.URL}}">{{.Name}}</a>
+			{{ end }}
+		</nav>
+
+        <section id="main">
+            <div>
+                <h1 id="title">{{ .Site.Title }} {{ .Site.Params.TitleEmoji | emojify }}</h1>
+                <ul>
+                  {{ range where .Pages "Section" "post" }}
+                  {{ range .Pages }}
+                  {{ .Render "summary" }}
+                  {{ end }}
+                  {{ end }}
+                </ul>
+            </div>
+        </section>
+    </body>
+</html>

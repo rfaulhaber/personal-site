@@ -40,6 +40,8 @@ My experience, as stated partially above, includes:
 
 I am [AWS certified](https://www.certmetrics.com/amazon/public/badge.aspx?i=2&t=c&d=2018-09-08&ci=AWS00490765).  
 
+My [resume](/resume.html).
+
 ## Contact
 
 - [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
