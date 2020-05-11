@@ -1,0 +1,83 @@
+<html>
+  <head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<base href="{{ .Site.BaseURL }}" />
+	<title>{{ .Params.title }}</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Lato&family=Oswald&family=Roboto+Condensed&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="{{ .Site.BaseURL }}css/resume.css" />
+	<link rel="canonical" href="{{ .Permalink }}" />
+  </head>
+  <body>
+    <section class="contact">
+      <div class="address">
+        <div>{{ .Params.contact.address.first }}</div>
+        <div>{{ .Params.contact.address.second }}</div>
+      </div>
+      <div class="phone">
+        {{ .Params.contact.phone }}
+      </div>
+      <div class="email">
+        {{ .Params.contact.email }}
+      </div>
+    </section>
+    <section class="title"> {{ .Params.title }} </section>
+    <hr>
+    <section class="skills">
+      <h1>Skills</h1>
+      {{ range $category, $skills := .Params.skills  }}
+      <ul class="skill-list">
+        <li class="skill-list-item">
+          <span class="category">{{ $category }}</span>:
+          {{ range $skills }}
+          <span class="skill">{{ . }}</span>
+          {{ end }}
+        </li>
+      </ul>
+      {{ end }}
+    </section>
+    <section class="experience">
+      <h1>Experience</h1>
+      <ul class="experience-list">
+        {{ range .Params.experience }}
+        <li class="experience-list-item">
+          <span class="company-name">{{ .company_name }}</span> - <span class="company-role">{{ .role }}</span>
+          <div class="company-date">
+            {{ .start }} - {{ if .current }} PRESENT {{ else }} {{ .end }} {{ end }}
+          </div>
+          <div class="description">
+            <ul>
+              {{ range .description }}
+              <li>
+                {{ .responsibility }}
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+        </li>
+        {{ end }}
+      </ul>
+    </section>
+    <section class="education">
+      <h1>Education</h1>
+          <span class="school-name">{{ .Params.education.school }}</span> - <span class="degree">{{ .Params.education.degree}}</span>
+          <div class="school-date">
+            {{ .Params.education.start }} - {{ .Params.education.end }}
+          </div>
+
+    </section>
+    <section class="certifications">
+      <h1>Certifications</h1>
+      {{ range .Params.certifications }}
+      <ul class="certifications-list">
+        <li class="certification-list-item">
+          {{ . }}
+        </li>
+      </ul>
+      {{ end }}
+    </section>
+  </body>
+</html>

@@ -17,7 +17,7 @@ googleAnalytics = "UA-23680267-3"
 	[[menu.header]]
 		name = "resume"
         title = "Resume"
-		url = "/resume.html"
+		url = "resume/"
 
 [privacy]
   [privacy.googleAnalytics]
