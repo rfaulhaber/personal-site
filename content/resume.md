@@ -5,14 +5,9 @@ title = "Ryan Faulhaber"
 certifications = [ "Salesforce Platform Developer I", "AWS Certified Developer - Associate" ]
 
 [contact]
-phone = "(216) 925-2135"
 email = "faulhaberryan@gmail.com"
 github = "rfaulhaber"
 linkedin = "https://www.linkedin.com/in/ryan-faulhaber-7438111a8/"
-
-[contact.address]
-first = "3679 W. 130th St."
-second = "Cleveland, OH 44111"
 
 [skills]
 languages = [ "JavaScript", "Rust", "Go" ]
@@ -23,19 +18,20 @@ platforms = [ "AWS", "Salesforce" ]
 [[experience]]
 company_name = "Acumen Solutions"
 role = "Senior Technical Consultant"
+location = "Cleveland OH"
 start = "June 2016"
 current = true
 
-    [[experience.description]]
-    responsibility = "Foo bar baz"
+[[experience.description]]
+responsibility = "Foo bar baz"
 
-    [[experience.description]]
-    responsibility = "Quux"
-
+[[experience.description]]
+responsibility = "Quux"
 
 [[experience]]
-company_name = "Chek.ai"
+company_name = "Ahoy.ai"
 role = "Technical Co-Founder, Software Developer"
+location = "Columbus OH"
 start = "May 2016"
 end = "January 2018"
 

@@ -7,31 +7,42 @@
 	<title>{{ .Params.title }}</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Lato&family=Oswald&family=Roboto+Condensed&display=swap" rel="stylesheet">
+  <link href="/fontawesome/css/all.css" rel="stylesheet">
 
 	<link rel="stylesheet" type="text/css" href="{{ .Site.BaseURL }}css/resume.css" />
 	<link rel="canonical" href="{{ .Permalink }}" />
   </head>
   <body>
+    <section class="title-section"> {{ .Params.title }} </section>
     <section class="contact">
-      <div class="address">
-        <div>{{ .Params.contact.address.first }}</div>
-        <div>{{ .Params.contact.address.second }}</div>
-      </div>
-      <div class="phone">
-        {{ .Params.contact.phone }}
-      </div>
-      <div class="email">
-        {{ .Params.contact.email }}
+      <div class="contact-links">
+        <span class="contact-item">
+          <a class="contact-link" href="mailto:{{ .Params.contact.email }}">
+            <img class="icon email-icon" src="/fontawesome/svgs/regular/envelope.svg">
+          </a>
+        </span>
+        <div class="contact-text">email: {{ .Params.contact.email }}</div>
+        <span class="contact-item">
+          <a class="contact-link" href="https://github.com/{{ .Params.contact.github }}">
+            <img class="icon github-icon" src="/fontawesome/svgs/brands/github.svg">
+          </a>
+        </span>
+        <div class="contact-text">github: {{ .Params.contact.github }}</div>
+        <span class="contact-item">
+          <a class="contact-link" href="{{ .Params.contact.linkedin }}">
+            <img class="icon linkedin-icon" src="/fontawesome/svgs/brands/linkedin-in.svg" alt="Linkedin">
+          </a>
+        </span>
+        <div class="contact-text">linkedin: {{ .Params.contact.linkedin }}</div>
       </div>
     </section>
-    <section class="title"> {{ .Params.title }} </section>
     <hr>
     <section class="skills">
       <h1>Skills</h1>
       {{ range $category, $skills := .Params.skills  }}
       <ul class="skill-list">
         <li class="skill-list-item">
-          <span class="category">{{ $category }}</span>:
+          <span class="category title">{{ $category }}</span>:
           {{ range $skills }}
           <span class="skill">{{ . }}</span>
           {{ end }}
@@ -44,9 +55,9 @@
       <ul class="experience-list">
         {{ range .Params.experience }}
         <li class="experience-list-item">
-          <span class="company-name">{{ .company_name }}</span> - <span class="company-role">{{ .role }}</span>
+          <span class="company-name job-heading title">{{ .company_name }},</span> <span class="company-location job-heading title">{{ .location }}</span> - <span class="company-role">{{ .role }}</span>
           <div class="company-date">
-            {{ .start }} - {{ if .current }} PRESENT {{ else }} {{ .end }} {{ end }}
+            {{ .start }} - {{ if .current }} Present {{ else }} {{ .end }} {{ end }}
           </div>
           <div class="description">
             <ul>
