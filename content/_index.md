@@ -18,23 +18,8 @@ Projects outside of work tend to be related to web development or Rust.
 
 All my projects can be found on my [GitHub](https://github.com/rfaulhaber).
 
-On top of that, I'm currently looking to contribute to open source projects!
-
-## Working with me
-
-If you are in need of software development work on a contractual, part time
-basis (that is, you don't mind me working in the evenings!), please get in
-touch. I'm familiar with a wide variety of languages, frameworks, tools, and
-platforms. If there's something I don't know, I trust that I can figure it out
-quickly.
-
-My experience, as stated partially above, includes:
-
-- Web development (JavaScript, React)
-- Mobile development (Android with Java and Kotlin, React Native)
-- Development on Amazon Web Services (especially AppSync, DynamoDB, RDS, EC2, ECS)
-
-I am [AWS certified](https://www.certmetrics.com/amazon/public/badge.aspx?i=2&t=c&d=2018-09-08&ci=AWS00490765).  
+On top of that, I'm currently looking to contribute to open source projects
+and interested in pursuing freelance work!
 
 ## Contact
 

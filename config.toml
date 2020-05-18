@@ -9,13 +9,9 @@ googleAnalytics = "UA-23680267-3"
 [params]
 	theme = "sea"
 
-	[[menu]]
-		name = "about"
-		url = "about/"
-
-	[[menu]]
-		name = "resume"
-		url = "resume/"
+    [[menu.header]]
+        name = "working with me"
+        url = "working/"
 
 [privacy]
   [privacy.googleAnalytics]
