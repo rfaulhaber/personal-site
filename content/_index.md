@@ -16,13 +16,9 @@ Projects outside of work tend to be related to web development or Rust.
 
 ## Projects
 
-Some fun projects I've worked on recently:
+All my projects can be found on my [GitHub](https://github.com/rfaulhaber).
 
-- [dial](https://github.com/rfaulhaber/dial), a Lisp interpreter inspired by [make a lisp](https://github.com/kanaka/mal).
-- [sc](https://github.com/rfaulhaber/sc), a simple `dc` clone written in Rust.
-- [janus](https://github.com/rfaulhaber/janus-proto), a clone of [Acme](http://acme.cat-v.org/) built during a hackathon.
-
-I'm hoping to start contributing to open source projects as well!
+On top of that, I'm currently looking to contribute to open source projects!
 
 ## Working with me
 
@@ -44,8 +40,10 @@ I am [AWS certified](https://www.certmetrics.com/amazon/public/badge.aspx?i=2&t=
 
 - [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
 - [GitHub](https://github.com/rfaulhaber)
+- [dev.to](https://dev.to/rfaulhaber)
+- [LinkedIn](https://www.linkedin.com/in/ryan-faulhaber-7438111a8/)
 
-Address and phone number are available upon request.
+Address, phone number, and resume can be provided upon request.
 
 ## About this site
 
