@@ -1,0 +1,94 @@
+<html>
+  <head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<base href="{{ .Site.BaseURL }}" />
+	<title>{{ .Params.title }}</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Lato&family=Oswald&family=Roboto+Condensed&display=swap" rel="stylesheet">
+  <link href="/fontawesome/css/all.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="{{ .Site.BaseURL }}css/resume.css" />
+	<link rel="canonical" href="{{ .Permalink }}" />
+  </head>
+  <body>
+    <section class="title-section"> {{ .Params.title }} </section>
+    <section class="contact">
+      <div class="contact-links">
+        <span class="contact-item">
+          <a class="contact-link" href="mailto:{{ .Params.contact.email }}">
+            <img class="icon email-icon" src="/fontawesome/svgs/regular/envelope.svg">
+          </a>
+        </span>
+        <div class="contact-text">email: {{ .Params.contact.email }}</div>
+        <span class="contact-item">
+          <a class="contact-link" href="https://github.com/{{ .Params.contact.github }}">
+            <img class="icon github-icon" src="/fontawesome/svgs/brands/github.svg">
+          </a>
+        </span>
+        <div class="contact-text">github: {{ .Params.contact.github }}</div>
+        <span class="contact-item">
+          <a class="contact-link" href="{{ .Params.contact.linkedin }}">
+            <img class="icon linkedin-icon" src="/fontawesome/svgs/brands/linkedin-in.svg" alt="Linkedin">
+          </a>
+        </span>
+        <div class="contact-text">linkedin: {{ .Params.contact.linkedin }}</div>
+      </div>
+    </section>
+    <hr>
+    <section class="skills">
+      <h1>Skills</h1>
+      {{ range $category, $skills := .Params.skills  }}
+      <ul class="skill-list">
+        <li class="skill-list-item">
+          <span class="category title">{{ $category }}</span>:
+          {{ range $skills }}
+          <span class="skill">{{ . }}</span>
+          {{ end }}
+        </li>
+      </ul>
+      {{ end }}
+    </section>
+    <section class="experience">
+      <h1>Experience</h1>
+      <div class="experience-list">
+        {{ range .Params.experience }}
+        <div class="experience-list-item">
+          <span class="company-name job-heading title">{{ .company_name }},</span> <span class="company-location job-heading title">{{ .location }}</span> - <span class="company-role">{{ .role }}</span>
+          <div class="company-date">
+            {{ .start }} - {{ if .current }} Present {{ else }} {{ .end }} {{ end }}
+          </div>
+          <div class="description">
+            <ul>
+              {{ range .description }}
+              <li>
+                {{ .responsibility }}
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </section>
+    <section class="education">
+      <h1>Education</h1>
+          <span class="company-name job-heading title">{{ .Params.education.school }}</span> - <span class="degree">{{ .Params.education.degree}}</span>
+          <div class="company-date">
+            {{ .Params.education.start }} - {{ .Params.education.end }}
+          </div>
+
+    </section>
+    <section class="certifications">
+      <h1>Certifications</h1>
+      {{ range .Params.certifications }}
+      <ul class="certifications-list">
+        <li class="certification-list-item">
+          {{ . }}
+        </li>
+      </ul>
+      {{ end }}
+    </section>
+  </body>
+</html>

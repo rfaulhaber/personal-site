@@ -1,0 +1,77 @@
+body {
+    margin-left: 25vw;
+    margin-right: 25vw;
+}
+
+h1 {
+    font-family: 'Oswald', sans-serif;
+}
+
+section, div, ul, li {
+    font-family: 'Source Code Pro', sans-serif;
+}
+
+.contact {
+    font-family: 'Roboto Condensed', sans-serif;
+    color: gray;
+}
+
+.title {
+    color: #e91d63;
+}
+
+.title-section {
+    font-size: 3rem;
+    font-family: 'Oswald', sans-serif;
+}
+
+.job-heading {
+    font-weight: bold;
+}
+
+.company-date {
+    color: darkgray;
+}
+
+.contact-links {
+    font-size: 0;
+}
+
+.icon {
+    height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.contact-text {
+    display: none;
+}
+
+.experience-list-item {
+    display: block;
+}
+
+@media print {
+    body {
+        margin-left: 2vw;
+        margin-right: 2vw;
+    }
+
+    .contact-link {
+        display: none;
+    }
+
+    .contact-text {
+        display: inherit;
+    }
+
+    .contact-links {
+        font-size: initial;
+        display: block;
+        font-size: 16px;
+    }
+
+    .company-role, job-heading {
+        font-size: 1.1rem;
+    }
+}

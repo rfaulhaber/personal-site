@@ -13,6 +13,10 @@ googleAnalytics = "UA-23680267-3"
         name = "working with me"
         url = "working/"
 
+    [[menu.header]]
+        name = "resume"
+        url = "resume/"
+
 [privacy]
   [privacy.googleAnalytics]
     anonymizeIP = true
