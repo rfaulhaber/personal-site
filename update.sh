@@ -8,6 +8,12 @@ echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 hugo
 
 cd public
+branch=`git branch --show-current`
+
+if [ $branch -ne "master" ]; then
+    git checkout master
+fi
+
 git add --all
 
 # Commit changes.
