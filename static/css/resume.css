@@ -26,21 +26,15 @@ section, div, ul, li {
 }
 
 .job-heading {
-    font-size: 1.2rem;
     font-weight: bold;
 }
 
 .company-date {
     color: darkgray;
-    font-family: 'Roboto Condensed', sans-serif;
 }
 
 .contact-links {
     font-size: 0;
-}
-
-.company-role {
-    font-size: 1.2rem;
 }
 
 .icon {
@@ -51,6 +45,10 @@ section, div, ul, li {
 
 .contact-text {
     display: none;
+}
+
+.experience-list-item {
+    display: block;
 }
 
 @media print {

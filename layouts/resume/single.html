@@ -52,9 +52,9 @@
     </section>
     <section class="experience">
       <h1>Experience</h1>
-      <ul class="experience-list">
+      <div class="experience-list">
         {{ range .Params.experience }}
-        <li class="experience-list-item">
+        <div class="experience-list-item">
           <span class="company-name job-heading title">{{ .company_name }},</span> <span class="company-location job-heading title">{{ .location }}</span> - <span class="company-role">{{ .role }}</span>
           <div class="company-date">
             {{ .start }} - {{ if .current }} Present {{ else }} {{ .end }} {{ end }}
@@ -68,14 +68,14 @@
               {{ end }}
             </ul>
           </div>
-        </li>
+        </div>
         {{ end }}
-      </ul>
+      </div>
     </section>
     <section class="education">
       <h1>Education</h1>
-          <span class="school-name">{{ .Params.education.school }}</span> - <span class="degree">{{ .Params.education.degree}}</span>
-          <div class="school-date">
+          <span class="company-name job-heading title">{{ .Params.education.school }}</span> - <span class="degree">{{ .Params.education.degree}}</span>
+          <div class="company-date">
             {{ .Params.education.start }} - {{ .Params.education.end }}
           </div>
 

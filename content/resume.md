@@ -22,11 +22,11 @@ location = "Cleveland OH"
 start = "June 2016"
 current = true
 
-[[experience.description]]
-responsibility = "Foo bar baz"
+# [[experience.description]]
+# responsibility = "Foo bar baz"
 
-[[experience.description]]
-responsibility = "Quux"
+# [[experience.description]]
+# responsibility = "Quux"
 
 [[experience]]
 company_name = "Ahoy.ai"
