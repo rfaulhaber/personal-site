@@ -5,45 +5,24 @@ draft: false
 weight: 100
 ---
 
-Hello!
+## Who?
 
-I'm a software developer based in Cleveland, Ohio. I have a wide range of
-software interests, ranging from plain old JavaScript development to 
-programming language theory.
+I'm a developer living in Cleveland, Ohio. My interests include web development,
+programming languages, and, increasingly, systems programming.
 
-I have been writing JavaScript code since 2014 and consider myself to be
-something of an advocate for the language. Much of my framework-related
-experience is with React and React Native. I'm also currently messing around
-with Vue and Electron. My first professional work in software development was
-web application development with JavaScript.
+Much of my professional work is web development-related. I've been writing 
+JavaScript since 2014 and I know my way around many big frameworks.
+Projects outside of work tend to be related to web development or Rust.
 
-I've been a Linux user for even longer, and the Unix philosophy is always in
-the back of my mind. I'm passionate about Unix-like systems, as I feel that 
-they are the only operating systems suitable for software development and for
-use as servers.
+## Projects
 
-Above all else, I think code should be simple, readable, and modular. How that
-is achieved depends on many factors, and though I don't think there's one magic
-bullet to solve this problem, I think it should be a priority in how code and
-software is written. Some time ago I was struck by the simple elegance of 
-conventions in Unix. Being able to write commands like:
+Some fun projects I've worked on recently:
 
-```bash
-$ echo "8 6 7 5 3 0 9" | tr " " "\n" | sort
-```
+- [dial](https://github.com/rfaulhaber/dial), a Lisp interpreter inspired by [make a lisp](https://github.com/kanaka/mal).
+- [sc](https://github.com/rfaulhaber/sc), a simple `dc` clone written in Rust.
+- [janus](https://github.com/rfaulhaber/janus-proto), a clone of [Acme](http://acme.cat-v.org/) built during a hackathon.
 
-left quite an impression on me.
-
-Similarly, learning about functional programming has also left an impression on
-me. Thinking of programs as transformations of data has been revelatory, and
-influences all the code I write, functional or not. It has also helped me
-achieve my goals of writing simple, readable, and modular code.
-
-Recently I've been writing a [lot](https://github.com/rfaulhaber/dial) [of](https://github.com/rfaulhaber/sc)
-[Rust](https://github.com/rfaulhaber/janus-proto). It's a language I've become
-quite passionate about. Its static typing, elegant syntax, modern design, and
-memory safety make it quite appealing to me.
-
+I'm hoping to start contributing to open source projects as well!
 
 ## Working with me
 
@@ -65,6 +44,8 @@ I am [AWS certified](https://www.certmetrics.com/amazon/public/badge.aspx?i=2&t=
 
 - [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
 - [GitHub](https://github.com/rfaulhaber)
+
+Address and phone number are available upon request.
 
 ## About this site
 
