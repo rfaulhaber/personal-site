@@ -4,10 +4,12 @@ title = "Ryan Faulhaber"
 theme = "duotone-theme-hugo"
 enableEmoji = true
 description = "Site for Ryan Faulhaber"
-googleAnalytics = "UA-23680267-3"
+#googleAnalytics = "UA-23680267-3"
 
 [params]
 	theme = "sea"
+    gtag = "UA-23680267-3"
+
 
     [[menu.header]]
         name = "working with me"
