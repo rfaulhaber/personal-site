@@ -42,6 +42,12 @@
           </a>
         </span>
         <div class="contact-text">linkedin: {{ .Params.contact.linkedin }}</div>
+        <span class="contact-item">
+          <a class="contact-link" href="{{ .Params.contact.site }}">
+            <img class="icon site-icon" src="/fontawesome/svgs/solid/link.svg" alt="Website">
+          </a>
+        </span>
+        <div class="contact-text">website: {{ .Params.contact.site }}</div>
       </div>
     </section>
     <hr>
@@ -103,7 +109,7 @@
 
   <script>
     document.getElementById('print-button').addEventListener('click', () => {
-        window.print();
-    });
+        
+    })
   </script>
 </html>

@@ -8,6 +8,7 @@ certifications = [ "Salesforce Platform Developer I", "AWS Certified Developer -
 email = "faulhaberryan@gmail.com"
 github = "rfaulhaber"
 linkedin = "https://www.linkedin.com/in/ryan-faulhaber-7438111a8/"
+site = "ryanfaulhaber.com"
 
 [skills]
 languages = [ "JavaScript", "Rust", "Go" ]
