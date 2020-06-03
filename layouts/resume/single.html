@@ -45,6 +45,7 @@
       </div>
     </section>
     <hr>
+    <button id="print-button">Print</button>
     <section class="skills">
       <h1>Skills</h1>
       {{ range $category, $skills := .Params.skills  }}
@@ -99,4 +100,10 @@
       {{ end }}
     </section>
   </body>
+
+  <script>
+    document.getElementById('print-button').addEventListener('click', () => {
+        window.print();
+    });
+  </script>
 </html>
