@@ -1,36 +1,34 @@
----
-title: "About"
-date: 2019-03-17T14:26:03-04:00
-draft: false
-weight: 100
----
++++
+title = "About"
+author = ["Ryan Faulhaber"]
+draft = false
++++
 
-## Who?
+## Who? {#who}
 
-I'm a developer living in Cleveland, Ohio. My interests include web development,
-programming languages, and, increasingly, systems programming.
+I'm a developer living in Cleveland, Ohio. My interests include web development, programming languages, and, increasingly, systems programming.
 
-Much of my professional work is web development-related. I've been writing 
-JavaScript since 2014 and I know my way around many big frameworks.
-Projects outside of work tend to be related to web development or Rust.
+Much of my professional work is web development-related. I've been writing JavaScript since 2014 and I know my way around many big frameworks. Projects outside of work tend to be related to web development or Rust.
 
-## Projects
+
+## Projects {#projects}
 
 All my projects can be found on my [GitHub](https://github.com/rfaulhaber).
 
-On top of that, I'm currently looking to contribute to open source projects
-and interested in pursuing freelance work!
+On top of that, I'm currently looking to contribute to open source projects and interested in pursuing freelance work!
 
-## Contact
 
-- [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
-- [GitHub](https://github.com/rfaulhaber)
-- [dev.to](https://dev.to/rfaulhaber)
-- [LinkedIn](https://www.linkedin.com/in/ryan-faulhaber-7438111a8/)
+## Contact {#contact}
+
+-   [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
+-   [GitHub](https://github.com/rfaulhaber)
+-   [dev.to](https://dev.to/rfaulhaber)
+-   [LinkedIn](https://www.linkedin.com/in/ryan-faulhaber-7438111a8/)
 
 Address, phone number, and resume can be provided upon request.
 
-## About this site
+
+## About this site {#about-this-site}
 
 This site was generated using [Hugo](https://gohugo.io).
 
