@@ -10,7 +10,7 @@ hugo
 cd public
 branch=`git branch --show-current`
 
-if [ "$branch" = "master" ]; then
+if [ "$branch" != "master" ]; then
     git checkout master
 fi
 
