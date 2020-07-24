@@ -2,10 +2,15 @@
 title = "You Should Try Emacs"
 author = ["Ryan Faulhaber"]
 date = 2020-07-13T16:00:00-04:00
+tags = ["emacs"]
 draft = false
 +++
 
-No, really, you should try Emacs. I gave it a shot a few months ago and now I'm hooked.
+No, really, you should try Emacs.
+
+<!--more-->
+
+I gave it a shot a few months ago and now I'm hooked.
 
 I know Emacs isn't the most trendy thing these days, in fact it seems that VS Code is the new hotness. But Emacs deserves your attention.
 

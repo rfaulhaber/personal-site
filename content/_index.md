@@ -23,9 +23,10 @@ On top of that, I'm currently looking to contribute to open source projects and 
 - [dev.to](https://dev.to/rfaulhaber)
 - [LinkedIn](https://www.linkedin.com/in/ryan-faulhaber-7438111a8/)
 - [Twitter](https://twitter.com/ryan%5Ffaulhaber)
+- [Keybase](https://keybase.io/rfaulhaber)
 - Matrix: @sys9:matrix.org
 
-Address, phone number, and resume can be provided upon request.
+Address, phone number, and complete resume can be provided upon request.
 
 ## About this site {#about-this-site}
 
