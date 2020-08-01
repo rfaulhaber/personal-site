@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/rfaulhaber
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://ryanfaulhaber.com
+  * I am rfaulhaber (https://keybase.io/rfaulhaber) on keybase.
+  * I have a public key ASC9m7_Ifk8d8SSV_Wh20AQWIi3PVHbLreiM1LSxiO0Z_Ao
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0120bc6e25544aed430d9fc1399805c098ceec7c104e409e79fc57d3897a4d5114940a",
+      "host": "keybase.io",
+      "kid": "0120bd9bbfc87e4f1df12495fd6876d00416222dcf5476cbade88cd4b4b188ed19fc0a",
+      "uid": "cf93c8bd21745158cf92dad864d7b619",
+      "username": "rfaulhaber"
+    },
+    "merkle_root": {
+      "ctime": 1596301665,
+      "hash": "ad3a68cd58b0b04e6c46af9128775914c673651c4cd31de904a98d8a2586a9cccacf7c553c2ec37ee440b507e59cb6595085058007e85366ccfb3a1bf1eb3fff",
+      "hash_meta": "e323af6e4cb9f320cb13cfd66ff9f616188eaf17afd9e2872b0a40037434e563",
+      "seqno": 17151684
+    },
+    "service": {
+      "entropy": "jlvBg4sui/KkPGU0x4TYu4u7",
+      "hostname": "ryanfaulhaber.com",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.5.0"
+  },
+  "ctime": 1596301687,
+  "expire_in": 504576000,
+  "prev": "8cfea4511fce78062887ef8b9aa300e6c771f2cd146c855ce3b9bca6a4f25517",
+  "seqno": 23,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgvZu/yH5PHfEklf1odtAEFiItz1R2y63ojNS0sYjtGfwKp3BheWxvYWTESpcCF8QgjP6kUR/OeAYoh++LmqMA5sdx8s0UbIVc47m8pqTyVRfEILRS8TMkVVqAOhbD7680T+YKfU+c2HoS8TlVBJeiFTbvAgHCo3NpZ8RAjKEdcIJm4LDxUcFk3fkosqDhO/8VdF43XvR72o/BS/ttV3S6RIckxGAw0FKwlrAHMK67pko/787fLB5a+eOtCKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIIADIh+Op+D+guDDLEBfs5JEZd7RT2HaJ5j6LHfv4JT8o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/rfaulhaber
+
+==================================================================
