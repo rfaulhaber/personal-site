@@ -11,29 +11,31 @@ description = "Site for Ryan Faulhaber"
     gtag = "UA-23680267-3"
 
 
-    [[menu.header]]
-        name = "working with me"
-        url = "working/"
+[[menu.header]]
+name = "working with me"
+url = "working/"
 
-    [[menu.header]]
-        name = "resume"
-        url = "resume/"
+[[menu.header]]
+name = "resume"
+url = "resume/"
 
-    [[menu.header]]
-        name = "posts"
-        url = "posts/"
+[[menu.header]]
+name = "posts"
+url = "posts/"
 
-[privacy]
-  [privacy.googleAnalytics]
-    anonymizeIP = true
-    respectDoNotTrack = true
-    useSessionStorage = true
+[taxonomies]
+    series = "series"
+    tags = "tags"
 
-[markup]
-  [markup.highlight]
-	lineNos = true
-    codeFences = false
-    lineNumbersInTable = true
-    noClasses = true
-    style = "solarized-dark"
-    tabWidth = 4
+[privacy.googleAnalytics]
+anonymizeIP = true
+respectDoNotTrack = true
+useSessionStorage = true
+
+[markup.highlight]
+lineNos = true
+codeFences = false
+lineNumbersInTable = true
+noClasses = true
+style = "solarized-dark"
+tabWidth = 4
