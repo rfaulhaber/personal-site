@@ -39,3 +39,6 @@ lineNumbersInTable = true
 noClasses = true
 style = "solarized-dark"
 tabWidth = 4
+
+[markup.goldmark.renderer]
+unsafe= true
