@@ -18,13 +18,12 @@ On top of that, I'm currently looking to contribute to open source projects and 
 
 ## Contact {#contact}
 
-- [Email 1](mailto:faulhaberryan@gmail.com) [Email 2](mailto:ryan@sys9.net) ([GPG](/gpg1.txt))
+- [Email](mailto:ryf@sent.as) ([GPG](/gpg1.txt))
 - [GitHub](https://github.com/rfaulhaber)
 - [dev.to](https://dev.to/rfaulhaber)
 - [LinkedIn](https://www.linkedin.com/in/ryan-faulhaber-7438111a8/)
 - [Twitter](https://twitter.com/ryan%5Ffaulhaber)
 - [Keybase](https://keybase.io/rfaulhaber)
-- Matrix: @sys9:matrix.org
 
 Address, phone number, and complete resume can be provided upon request.
 
