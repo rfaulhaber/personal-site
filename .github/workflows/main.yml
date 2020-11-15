@@ -37,7 +37,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.Pages_actions_token }}
+          personal_token: ${{ secrets.PAGES_ACCESS_TOKEN }}
           external_repository: rfaulhaber/rfaulhaber.github.io
           publish_branch: master
           publish_dir: ./public
