@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # shamelessly stolen from the Hugo site, with some modifications
 
