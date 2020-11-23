@@ -47,7 +47,7 @@ Magit supports not only what appears to be most Git functionality, but you can m
 
 This looks similar to the commit window we saw earlier.
 
-After typing `-f` I've turned on the `--force` flag, and Magit will run `git push --force` instead.
+After typing `-F` I've turned on the `--force` flag, and Magit will run `git push --force` instead.
 
 I like Magit because, unlike Sourcetree or even the terminal you don't have to leave the editor to do Git things, and unlike VS Code or IntelliJ, I can perform all these Git actions without ever having to touch the mouse.
 
