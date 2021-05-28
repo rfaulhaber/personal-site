@@ -4,6 +4,7 @@ author = ["Ryan Faulhaber"]
 tags = ["emacs"]
 draft = false
 series = ["Cool Emacs Things"]
+date = 2021-05-28T3:25:00-04:00
 +++
 
 Today we continue [my ongoing series on Emacs](https://ryanfaulhaber.com/series/cool-emacs-things/) with a feature of Emacs that feels genuinely magical: Dired.
