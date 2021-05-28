@@ -2,4 +2,4 @@
 
 with pkgs;
 
-mkShell { buildInputs = with pkgs; [ hugo sass ]; }
+mkShell { buildInputs = with pkgs; [ hugo ]; }
