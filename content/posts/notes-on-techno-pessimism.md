@@ -3,7 +3,7 @@ title = "Some notes on techno-pessimism"
 author = ["Ryan Faulhaber"]
 date = 2021-06-27T10:43:00-04:00
 tags = ["meta"]
-draft = false
+draft = true
 +++
 
 [Recently I've become entralled by Emacs](https://ryanfaulhaber.com/posts/try-emacs/). Part of the reason why I think is because, among other reasons, Emacs represents a lost horizon for what a computer program could be.
