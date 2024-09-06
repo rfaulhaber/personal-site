@@ -32,4 +32,4 @@ Address, phone number, and complete resume may be provided upon request.
 
 This site was generated using [Hugo](https://gohugo.io).
 
-This site's theme is [duotone-theme-hugo](https://github.com/rfaulhaber/duotone-theme-hugo).
+This site's theme is [Archie](https://github.com/athul/archie).
