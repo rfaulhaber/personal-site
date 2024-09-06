@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html class="sea-theme">
+    <head>
+	
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23680267-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23680267-3');
+</script>
+
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<base href="/" />
+	<title>Ryan Faulhaber</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/hack@0.8.1/dist/hack.css" />
+	<link rel="stylesheet" href="https://unpkg.com/hack@0.8.1/dist/standard.css" />
+	<link href="https://fonts.googleapis.com/css?family=Fira+Mono&display=swap" rel="stylesheet" />
+
+	<link rel="stylesheet" href="/css/index.css" />
+
+	<link rel="canonical" href="/posts/blog/" />
+</head>
+
+    <body>
+        <span class="header-path">
+  
+    <a href="/">/Ryan Faulhaber</a><a href="/posts/">/posts</a><a href="/posts/blog/">/writing the module</a>
+  
+</span>
+
+    </body>
+</html>
+
+
+<section id="main">
+	<h1 id="title">Writing the module</h1>
+	<div class="post-meta">Mon, Jan 1, 0001 - 7 min </div>
+	
+	<div class="tag-container">
+		<span class="tags-label">tags:</span>
+		<ul id="tags">
+			
+			<li> <a href="/tags/rust">rust</a> </li>
+			
+			<li> <a href="/tags/emacs">emacs</a> </li>
+			
+			<li> <a href="/tags/experiment">experiment</a> </li>
+			
+		</ul>
+		
+	</div>
+	<div>
+		<article id="content">
+			<p>For the sake of simplicity, we&rsquo;ll write a dead simple module, one that&rsquo;s so simple we could write it in Emacs Lisp:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-elisp" data-lang="elisp">(<span style="color:#b58900">defun</span> <span style="color:#268bd2">my-message-from-rust</span> ()
+<span style="color:#2aa198">&#34;Returns a message from Rust&#34;</span>
+<span style="color:#2aa198">&#34;Hello Emacs, I&#39;m from Rust&#34;</span>)
+
+(<span style="color:#b58900">defun</span> <span style="color:#268bd2">my-sum</span> (<span style="color:#719e07">&amp;rest</span> <span style="color:#268bd2">args</span>)
+<span style="color:#2aa198">&#34;Returns the sum of ARGS&#34;</span>
+(<span style="color:#268bd2">apply</span> <span style="color:#2aa198">&#39;+</span> <span style="color:#268bd2">args</span>))
+
+(<span style="color:#b58900">provide</span> <span style="color:#2aa198">&#39;my-rust-mod</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<p>Our module will provide two functions, <code>my-message-from-rust</code> and <code>my-sum</code>. The former simply returns a string literal, while the latter sums up all the values passed to it. That should be easy enough.</p>
+<p>As I mentioned earlier, the documentation says that we&rsquo;ll have to implement a function called <code>emacs_module_init</code>. This is where our Rust code will define its functions.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>In Emacs, it&rsquo;s conventional to register your module with the list of features available to Emacs. The <code>provide</code> call tells Emacs that <code>'my-rust-mod</code> is now a feature within Emacs.</p>
+<p>Let&rsquo;s at least set up the function first. Our <code>lib.rs</code> file should look like:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">33
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"> <span style="color:#719e07">#![allow(non_upper_case_globals)]</span> <span style="color:#719e07">#![allow(non_camel_case_types)]</span> <span style="color:#719e07">#![allow(non_snake_case)]</span>
+
+<span style="color:#586e75">// you shouldn&#39;t have to put this at the top of your file, but I noticed that
+</span><span style="color:#586e75">// rust-analyer got a little confused on my computer when I put it after my code
+</span><span style="color:#586e75"></span>include<span style="color:#719e07">!</span>(concat<span style="color:#719e07">!</span>(env<span style="color:#719e07">!</span>(<span style="color:#2aa198">&#34;OUT_DIR&#34;</span>), <span style="color:#2aa198">&#34;/bindings.rs&#34;</span>));
+
+<span style="color:#586e75">// we&#39;ll be using these later
+</span><span style="color:#586e75"></span><span style="color:#719e07">use</span> std::ffi::CString;
+<span style="color:#719e07">use</span> std::os::raw;
+
+<span style="color:#719e07">#[no_mangle]</span> <span style="color:#719e07">#[allow(non_upper_case_globals)]</span>
+<span style="color:#586e75">// Rust doesn&#39;t allow uninitialized static values, and Emacs doesn&#39;t care what
+</span><span style="color:#586e75">// the value of this variable is, as long as it&#39;s there
+</span><span style="color:#586e75"></span><span style="color:#719e07">pub</span> <span style="color:#719e07">static</span> plugin_is_GPL_compatible: <span style="color:#268bd2">libc</span>::c_int <span style="color:#719e07">=</span> <span style="color:#2aa198">0</span>;
+
+<span style="color:#586e75">// ordinarily the Rust compiler will mangle funciton names. we don&#39;t want to do
+</span><span style="color:#586e75">// that, since the C code won&#39;t know what code to call.
+</span><span style="color:#586e75">// we&#39;ll also want to use `unsafe` because we need access to raw pointers #[no_mangle]
+</span><span style="color:#586e75"></span><span style="color:#719e07">pub</span> <span style="color:#719e07">unsafe</span> <span style="color:#719e07">extern</span> <span style="color:#2aa198">&#34;C&#34;</span> <span style="color:#719e07">fn</span> <span style="color:#268bd2">emacs_module_init</span>(ert: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> emacs_runtime) -&gt; <span style="color:#268bd2">libc</span>::c_int {
+<span style="color:#268bd2">let</span> env <span style="color:#719e07">=</span> (<span style="color:#719e07">*</span>ert)
+.get_environment
+<span style="color:#586e75">// for simplicity&#39;s sake we&#39;ll be getting a lot of mileage out of
+</span><span style="color:#586e75">// .expect()!
+</span><span style="color:#586e75"></span>.expect(<span style="color:#2aa198">&#34;cannot get environment from Emacs&#34;</span>)
+<span style="color:#586e75">// remember, these are function pointers we&#39;re dealing with!
+</span><span style="color:#586e75"></span>(ert);
+
+    <span style="color:#586e75">// to be used later
+</span><span style="color:#586e75"></span>    <span style="color:#268bd2">let</span> make_function <span style="color:#719e07">=</span> (<span style="color:#719e07">*</span>env).make_function.except(<span style="color:#2aa198">&#34;cannot get make_function!&#34;</span>);
+
+    todo<span style="color:#719e07">!</span>(<span style="color:#2aa198">&#34;Finish writing this function!&#34;</span>)
+
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Now let&rsquo;s write some functions.</p>
+<h2 id="my-message-from-rust"><code>my-message-from-rust</code></h2>
+<p>First, the actual Rust code:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#586e75">// no need to no-mangle it since it&#39;ll never be called by name
+</span><span style="color:#586e75"></span><span style="color:#719e07">unsafe</span> <span style="color:#719e07">extern</span> <span style="color:#2aa198">&#34;C&#34;</span> <span style="color:#719e07">fn</span> <span style="color:#268bd2">message_from_rust</span>(
+env: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> emacs_env,
+nargs: <span style="color:#dc322f">isize</span>,
+args: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> emacs_value,
+data: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> raw::c_void,
+) -&gt; <span style="color:#268bd2">emacs_value</span> {
+<span style="color:#586e75">// our actual message
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> s <span style="color:#719e07">=</span> <span style="color:#2aa198">&#34;Hello Emacs! I&#39;m from Rust!&#34;</span>;
+<span style="color:#586e75">// function pointer to make_string, provided by Emacs
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> make_string <span style="color:#719e07">=</span> (<span style="color:#719e07">*</span>env).make_string.unwrap();
+<span style="color:#586e75">// converted to a CString
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> c_string <span style="color:#719e07">=</span> CString::new(s).unwrap();
+<span style="color:#586e75">// grab the size in bytes, as needed by Emacs
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> len <span style="color:#719e07">=</span> c_string.as_bytes().len() <span style="color:#719e07">as</span> <span style="color:#dc322f">isize</span>;
+<span style="color:#586e75">// return the emacs_value returned by make_string
+</span><span style="color:#586e75"></span>make_string(env, c_string.as_ptr(), len)
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Now, let&rsquo;s return to our init function and add the following:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#268bd2">let</span> my_message_func <span style="color:#719e07">=</span> make_function(
+<span style="color:#586e75">// a reference to our Emacs environment, of course
+</span><span style="color:#586e75"></span>env,
+<span style="color:#586e75">// min_arity argument
+</span><span style="color:#586e75"></span><span style="color:#2aa198">0</span>,
+<span style="color:#586e75">// max_arity argument
+</span><span style="color:#586e75"></span><span style="color:#2aa198">0</span>,
+<span style="color:#586e75">// our actual function
+</span><span style="color:#586e75"></span><span style="color:#b58900">Some</span>(message_from_rust),
+<span style="color:#586e75">// docstring, so users can check the documentation for this funciton in
+</span><span style="color:#586e75">// Emacs
+</span><span style="color:#586e75"></span>CString::new(<span style="color:#2aa198">&#34;This will print a nice message from Rust code!&#34;</span>)
+.unwrap()
+.as_ptr(),
+<span style="color:#586e75">// data argument. we are not passing this function any additional data, so
+</span><span style="color:#586e75">// we give it `null`
+</span><span style="color:#586e75"></span>std::ptr::null_mut(),
+);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>What&rsquo;s important to note about what we&rsquo;re doing here is that we&rsquo;re creating a new function <em>value</em>. Functions in Emacs Lisp (and indeed any functional programming language I&rsquo;ve ever heard of) are just values, like integers or strings. Much like our call to <code>make_string</code> earlier, we&rsquo;re just creating a new value on Emacs&rsquo;s terms. In fact it&rsquo;s probably more like creating an anonymous function. If this was the only code we wrote, our users would have no way of calling our code from within Emacs. We&rsquo;ll get to that later, though.</p>
+<h2 id="my-sum"><code>my-sum</code></h2>
+<p>This one is a bit more interesting because we want our function to accept an indefinite amount of arguments. The actual function code:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#586e75">// again, no need to no-mangle
+</span><span style="color:#586e75"></span><span style="color:#719e07">unsafe</span> <span style="color:#719e07">extern</span> <span style="color:#2aa198">&#34;C&#34;</span> <span style="color:#719e07">fn</span> <span style="color:#268bd2">my_sum</span>(
+env: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> emacs_env,
+nargs: <span style="color:#dc322f">isize</span>,
+args: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> emacs_value,
+data: <span style="color:#719e07">*</span><span style="color:#719e07">mut</span> raw::c_void,
+) -&gt; <span style="color:#268bd2">emacs_value</span> {
+<span style="color:#586e75">// Emacs provides us with a way of grabbing an integer value out of an
+</span><span style="color:#586e75">// emacs_value object
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> extract_integer <span style="color:#719e07">=</span> (<span style="color:#719e07">*</span>env)
+.extract_integer
+.expect(<span style="color:#2aa198">&#34;could not get extract_integer&#34;</span>);
+
+    <span style="color:#268bd2">let</span> <span style="color:#719e07">mut</span> numbers <span style="color:#719e07">=</span> <span style="color:#b58900">Vec</span>::new();
+
+    <span style="color:#586e75">// Emacs is kind enough to tell us how many values were passed to our
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">// function, so we don&#39;t really have to worry about whether or not the size
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">// of `args` is the same as `nargs`
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">for</span> i <span style="color:#719e07">in</span> <span style="color:#2aa198">0</span>..nargs {
+        <span style="color:#586e75">// pointer arithmetic! how unsafe!
+</span><span style="color:#586e75"></span>        numbers.push(extract_integer(env, <span style="color:#719e07">*</span>args.offset(i)));
+    }
+
+    <span style="color:#586e75">// some good old Rust iterators
+</span><span style="color:#586e75"></span>    <span style="color:#268bd2">let</span> sum <span style="color:#719e07">=</span> numbers.iter().fold(<span style="color:#2aa198">0</span>, <span style="color:#719e07">|</span>acc, n<span style="color:#719e07">|</span> acc <span style="color:#719e07">+</span> n);
+
+    <span style="color:#586e75">// again, we have to rely on Emacs to convert to the proper type
+</span><span style="color:#586e75"></span>    <span style="color:#268bd2">let</span> make_integer <span style="color:#719e07">=</span> (<span style="color:#719e07">*</span>env).make_integer.expect(<span style="color:#2aa198">&#34;could not get make_integer&#34;</span>);
+
+    make_integer(env, sum)
+
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>And again, we have to register it with the system in a similar way to our other function.</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#268bd2">let</span> my_sum_func <span style="color:#719e07">=</span> make_function(
+env,
+<span style="color:#2aa198">0</span>,
+<span style="color:#586e75">// this is a special value provided to us by Emacs letting it know that we
+</span><span style="color:#586e75">// want our fuction to accept an indefinite amount of arguments
+</span><span style="color:#586e75"></span>emacs_variadic_function <span style="color:#719e07">as</span> <span style="color:#dc322f">isize</span>,
+<span style="color:#b58900">Some</span>(my_sum),
+CString::new(<span style="color:#2aa198">&#34;Sums a series of integers&#34;</span>)
+.unwrap()
+.as_ptr(),
+std::ptr::null_mut(),
+);
+</code></pre></td></tr></table>
+</div>
+</div>
+<h2 id="finishing-up-module-init">Finishing up module init</h2>
+<p>As I mentioned earlier, we have to associate our new function values to names in order to call them. At the moment they&rsquo;re sort of floating out in the ether with only memory addresses to reference them, and that&rsquo;s not particularly useful.</p>
+<p>First, we need some symbols to associate to these functions. A symbol in Lisp is more or less just an identifier, but in order to create them they must first be <em>interned</em>. This is where we can use the <code>intern</code> function.</p>
+<p>Let&rsquo;s add the following to our init function:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#268bd2">let</span> intern <span style="color:#719e07">=</span> (\<span style="color:#719e07">*</span>env).intern.expect(<span style="color:#2aa198">&#34;could not get intern&#34;</span>);
+
+<span style="color:#586e75">// creates &#34;my-message-from-rust symbol&#34;
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> my_message_sym <span style="color:#719e07">=</span> intern(env, CString::new(<span style="color:#2aa198">&#34;my-message-from-rust&#34;</span>).unwrap().as_ptr());
+<span style="color:#586e75">// creates &#34;my-sum&#34;
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> my_sum_sym <span style="color:#719e07">=</span> intern(env, CString::new(<span style="color:#2aa198">&#34;my-sum&#34;</span>).unwrap().as_ptr());
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Next, we&rsquo;ll need to associate our functions with said symbols:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#586e75">// intern will return a symbol if it&#39;s already defined.
+</span><span style="color:#586e75">// we&#39;re going to use `fset` to associate our functions to symbols
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> fset <span style="color:#719e07">=</span> intern(env, CString::new(<span style="color:#2aa198">&#34;fset&#34;</span>).unwrap().as_ptr());
+
+<span style="color:#586e75">// we also want to actually call fset, so we&#39;ll need funcall
+</span><span style="color:#586e75"></span><span style="color:#268bd2">let</span> funcall <span style="color:#719e07">=</span> (\<span style="color:#719e07">*</span>env).funcall.expect(<span style="color:#2aa198">&#34;could not get funcall&#34;</span>);
+
+<span style="color:#586e75">// in Emacs Lisp this is like:
+</span><span style="color:#586e75">// (fset &#39;my-message-from-rust (lambda () ...))
+</span><span style="color:#586e75"></span>funcall(env, fset, <span style="color:#2aa198">2</span>, [my_message_sym, my_message_func].as_mut_ptr());
+funcall(env, fset, <span style="color:#2aa198">2</span>, [my_sum_sym, my_sum_func].as_mut_ptr());
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Finally, we&rsquo;ll want to provide our new feature:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#268bd2">let</span> provide <span style="color:#719e07">=</span> intern(env, CString::new(<span style="color:#2aa198">&#34;provide&#34;</span>).unwrap().as_ptr());
+<span style="color:#268bd2">let</span> feat_name <span style="color:#719e07">=</span> intern(env, CString::new(<span style="color:#2aa198">&#34;my-rust-mod&#34;</span>).unwrap().as_ptr());
+<span style="color:#268bd2">let</span> provide_args <span style="color:#719e07">=</span> [feat_name].as_mut_ptr();
+
+<span style="color:#586e75">// equivalent of (provide &#39;my-rust-mod)
+</span><span style="color:#586e75"></span>funcall(env, provide, <span style="color:#2aa198">1</span>, provide_args);
+
+<span style="color:#586e75">// and finally, we can return from this function!
+</span><span style="color:#586e75"></span><span style="color:#2aa198">0</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>A brief explanation of named and anonymous functions: <div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"> <span style="color:#586e75">// named, function declaration function foo() {} // named function expression // this is &#34;named&#34; because of &#34;function bar()&#34;, // not because we&#39;re assigning it to a variable named &#34;foo&#34; // doing this is optional and may make reading stack // traces or writing a recursive function easier const foo = function bar() {}; // the right hand side of this assignment is an // anonymous function expression const foo = function() {}; // arrow function, nearly equivalent to form above. // arrow functions are always anonymous const foo = () =&gt; {}; 
+</span></code></pre></td></tr></table>
+</div>
+</div> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+		</article>
+	</div>
+</section>
+<aside id="meta" style="display: fixed;top:100px;right: 0">
+	<div>
+		
+		
+		<a class="next" href="/posts/js-promises/"> A Guide to Promises in JavaScript</a>
+		
+	</div>
+</aside>
+
+
+</body>
+
+<footer id="footer">
+	<p id="copyright">
+		
+	</p>
+</footer>
+
+</html>

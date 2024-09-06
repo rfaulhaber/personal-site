@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="sea-theme">
+    <head>
+	
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23680267-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23680267-3');
+</script>
+
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<base href="/" />
+	<title>Ryan Faulhaber</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/hack@0.8.1/dist/hack.css" />
+	<link rel="stylesheet" href="https://unpkg.com/hack@0.8.1/dist/standard.css" />
+	<link href="https://fonts.googleapis.com/css?family=Fira+Mono&display=swap" rel="stylesheet" />
+
+	<link rel="stylesheet" href="/css/index.css" />
+
+	<link rel="canonical" href="/posts/promises/" />
+</head>
+
+    <body>
+        <span class="header-path">
+  
+    <a href="/">/Ryan Faulhaber</a><a href="/posts/">/posts</a><a href="/posts/promises/">/a guide to promises in javascript</a>
+  
+</span>
+
+    </body>
+</html>
+
+
+<section>
+	<h1>A Guide to Promises in JavaScript</h1>
+	<p>Although the <code>async</code> and <code>await</code> keywords are now part of standard JavaScript, under the hood they ultimately use Promises. Here we’ll explore what Promises are, why they’re needed, and how you can “promisify” callbacks in JavaScript.</p>
+<p>I find a lot of newcomers are often confused by terms like “callbacks”, “Promises”, and what exactly <code>async</code> and <code>await</code> do. I hope to clear that up with this article.</p>
+<p>For the sake of clarity, this guide will use <code>function</code> syntax, and not arrow functions. If you know how to use arrow functions, you can replace much of this code with arrow functions and have it behave similarly. Also, some of these code samples are more verbose than they need to be. Methods like <code>Promise.resolve()</code> can cut down on boilerplate code.</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="first-class-functions-in-javascript">First Class Functions in JavaScript</h1>
+<p>In JavaScript, functions can be used like any other variable. This makes them <em>first class</em>. For example:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">function</span> callFunc(val, f) {
+    <span style="color:#719e07">return</span> f(val);
+}
+
+<span style="color:#586e75">// a simple function that adds 10 to any number
+</span><span style="color:#586e75"></span><span style="color:#268bd2">function</span> add10(x) {
+    <span style="color:#719e07">return</span> x <span style="color:#719e07">+</span> <span style="color:#2aa198">10</span>;
+}
+
+<span style="color:#586e75">// here we&#39;re passing the `add10` function to another function
+</span><span style="color:#586e75"></span>callFunc(<span style="color:#2aa198">3</span>, add10); <span style="color:#586e75">// =&gt; 13
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Note that in the above example, <code>callFunc</code> is calling the function we pass it and passing in a value itself. Here <code>f</code> could be replaced with any function.</p>
+<p>In JavaScript functions can be <strong>anonymous</strong>, simply meaning that they aren’t named<!-- raw HTML omitted --><!-- raw HTML omitted -->1<!-- raw HTML omitted --><!-- raw HTML omitted -->.</p>
+<p>You can pass an anonymous function to another function directly if you so choose. We can rewrite the call to <code>callFunc</code> using an anonymous function in the following way:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">callFunc(<span style="color:#2aa198">3</span>, <span style="color:#268bd2">function</span>(x) {
+    <span style="color:#719e07">return</span> x.toString();
+}); <span style="color:#586e75">// =&gt; &#39;3&#39;
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>One interesting aspect of this feature is that it allows for a deferral of execution of sorts. The function we pass to <code>callFunc</code> doesn’t actually get called until the function itself calls it.</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="re-introducing-callbacks">(Re)-Introducing Callbacks</h1>
+<p>A <strong>callback</strong> is an extension of this concept. Some definitions of callbacks make them sound just like first class functions, but a more specific definition would be: a function that is invoked at the end of an asynchronous operation.</p>
+<p>A classic example is with JavaScript’s <code>setTimeout</code> function:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">setTimeout(<span style="color:#268bd2">function</span>() {
+    console.log(<span style="color:#2aa198">&#39;hello world!&#39;</span>);
+}, <span style="color:#2aa198">2000</span>);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>In the above example, “hello world!” will get printed after two seconds. You can think of <code>setTimeout</code> as performing an operation, in this case, waiting for two seconds, and then calling the anonymous function after that time has passed. We don’t have any control over what <code>setTimeout</code> is doing, but we know that it will wait for 2000 milliseconds, and are able to provide it a function to be executed once it’s done (of course we expect <code>setTimeout</code> to do this). This is generally what callbacks are.</p>
+<p>Callbacks developed as a pattern in JavaScript because they were an easy way to know when some asynchronous actions ended. Fetching data from a server, for example, usually involved writing a callback to handle that resulting data.</p>
+<p>Although callbacks do get the job done, they do lead to very confusing code, and this is perhaps the biggest problem with them. Consider the following example. Suppose we have a function called <code>getDataFromServer</code> that takes some data necessary for a database query and a callback, to be executed upon the completion of that callout:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#586e75">// `getDataFromServer` takes a callback and data and passes `data` and
+</span><span style="color:#586e75">// `error` to whatever callback we provide
+</span><span style="color:#586e75"></span>getDataFromServer(someInitialData, <span style="color:#268bd2">function</span>(data, error) {
+    <span style="color:#719e07">if</span> (data) {
+        <span style="color:#586e75">// here we do our second query
+</span><span style="color:#586e75"></span>        getDataFromServer(data, <span style="color:#268bd2">function</span>(nextData, error) {
+            <span style="color:#586e75">// here we get our next result
+</span><span style="color:#586e75"></span>            <span style="color:#719e07">if</span> (nextData) {
+                doSomethingElse();
+            }
+        });
+    }
+    <span style="color:#586e75">// ...
+</span><span style="color:#586e75"></span>});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>It’s possible to rewrite the above code using named functions but it doesn’t make it much less confusing.</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">getDataFromServer(initialData, firstRetrieval);
+
+<span style="color:#268bd2">function</span> firstRetrieval(data, error) {
+    <span style="color:#719e07">if</span> (data) {
+        getDataFromServer(nextRetrieval, data);
+    }
+    <span style="color:#586e75">// ...
+</span><span style="color:#586e75"></span>}
+
+<span style="color:#268bd2">function</span> nextRetrieval(data, error) {
+    <span style="color:#719e07">if</span> (data) {
+        doSomethingElse();
+    }
+    <span style="color:#586e75">// ...
+</span><span style="color:#586e75"></span>}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>This is referred to as “callback hell”, because, aside from <em>looking</em> like hell, it creates a maintenance issue: we’re left with a bunch of callbacks that may be difficult to read and mentally parse through.</p>
+<p>Neither of these examples consider variables that live outside the context of these functions. Code like this used to be quite commonplace. Maybe you need to update something on the DOM once you get the first query. Very confusing!</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="enter-promises">Enter Promises</h1>
+<p>A <code>Promise</code> in some sense is a glorified callback. They allow you to transform code that utilize callbacks into something that appears more synchronous.</p>
+<p>A <code>Promise</code> is just an object. In its most common usage it can be constructed as such:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(executor);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>executor</code> is a function that takes two arguments provided by the <code>Promise</code> object, <code>resolve</code> and <code>reject</code>, which are each functions themselves. <code>executor</code> usually contains some asynchronous code and is evaluated as soon as the <code>Promise</code> is constructed.</p>
+<p>A trivial example of a <code>Promise</code> can be seen with <code>setTimeout</code></p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        <span style="color:#268bd2">const</span> message <span style="color:#719e07">=</span> <span style="color:#2aa198">&#39;hello world&#39;</span>;
+        console.log(<span style="color:#2aa198">&#39;message in promise: &#39;</span>, message);
+        resolve(message);
+    }, <span style="color:#2aa198">2000</span>);
+});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>This code is a little different than our original <code>setTimeout</code> code. In addition to printing “hello world” to the console, we’re passing that string to the <code>resolve</code> function. If you run this code, <code>message in promise: hello world</code> gets printed to the console after two seconds.</p>
+<p>At this point, it may not be clear why Promises are useful. So far we’ve just added some more decorum around our callback code.</p>
+<p>In order to make this code a little more useful, we’ll invoke the Promise’s <code>.then()</code> method:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        resolve(<span style="color:#2aa198">&#39;hello world&#39;</span>);
+    }, <span style="color:#2aa198">2000</span>);
+}).then(<span style="color:#268bd2">function</span>(message) {
+    console.log(<span style="color:#2aa198">&#39;message: &#39;</span>, message);
+});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>By calling <code>.then()</code> we can actually use the value passed to <code>resolve</code>. <code>.then()</code> takes a function itself, and that function’s arguments are whatever get passed into the <code>resolve</code> function. In the above code we’re passing <code>'hello world'</code> and we can expect it to be passed to whatever function we give <code>.then()</code>.</p>
+<p>It’s important to note that <code>.then()</code> actually returns another <code>Promise</code>. This lets you chain <code>Promise</code> calls together. Whatever is returned in the function passed to a <code>.then()</code> is passed to the next <code>.then()</code>.</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        resolve(<span style="color:#2aa198">&#39;hello world&#39;</span>);
+    }, <span style="color:#2aa198">2000</span>);
+}).then(<span style="color:#268bd2">function</span>(message) {
+    console.log(<span style="color:#2aa198">&#39;message: &#39;</span>, message); <span style="color:#586e75">// logs &#34;message: hello world&#34;
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">return</span> message.toUpperCase();
+}).then(<span style="color:#268bd2">function</span>(message) {
+    console.log(<span style="color:#2aa198">&#39;message: &#39;</span>, message); <span style="color:#586e75">// logs &#34;message: HELLO WORLD&#34;
+</span><span style="color:#586e75"></span>});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>There is an additional method, <code>.catch()</code>, which is used for error handling. This is where the <code>reject</code> function comes into play. The <code>.catch()</code> callback will be called not only if the <code>reject</code> function is called, but if <em>any</em> of the <code>.then()</code> callbacks throw an error.</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        reject(<span style="color:#2aa198">&#39;hello world&#39;</span>);
+    }, <span style="color:#2aa198">2000</span>);
+}).then(<span style="color:#268bd2">function</span>(message) {
+    console.log(<span style="color:#2aa198">&#39;message: &#39;</span>, message); <span style="color:#586e75">// this will not get called
+</span><span style="color:#586e75"></span>}).<span style="color:#719e07">catch</span>(<span style="color:#268bd2">function</span>(err) {
+    console.log(<span style="color:#2aa198">&#39;error:&#39;</span>, err); <span style="color:#586e75">// this will log &#34;error: hello world&#34;
+</span><span style="color:#586e75"></span>});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>One last note on <code>.then()</code> methods, and this may be somewhat confusing: it actually takes two parameters. The first is the callback for when the <code>Promise</code> is fulfilled, and the second being for when the <code>Promise</code> is rejected.</p>
+<p>The above code could just as well be written:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">const</span> myPromise <span style="color:#719e07">=</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        reject(<span style="color:#2aa198">&#39;hello world&#39;</span>);
+    }, <span style="color:#2aa198">2000</span>);
+}).then(<span style="color:#268bd2">function</span>(message) {
+    console.log(<span style="color:#2aa198">&#39;message: &#39;</span>, message); <span style="color:#586e75">// this will not get called
+</span><span style="color:#586e75"></span>}, <span style="color:#268bd2">function</span>(err) {
+    console.log(<span style="color:#2aa198">&#39;error:&#39;</span>, err); <span style="color:#586e75">// this will log &#34;error: hello world&#34;
+</span><span style="color:#586e75"></span>});
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Note that we’re passing two callbacks into the <code>.then()</code>. What distinguishes this from using a <code>.catch()</code> is that this form corresponds directly to a specific handler. This is useful if you need to handle the failure of one callback specifically.</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="promisifying">Promisifying</h1>
+<p>Converting a function that uses callbacks into one that utilizes <code>Promise</code> objects is done in the following steps:</p>
+<ol>
+<li>Wrap the code that uses a callback in a new <code>Promise</code></li>
+<li>In the success condition of your callback, pass whatever result you get into the <code>resolve</code> function, if applicable</li>
+<li>In the error condition of your callback, pass whatever failure you get into the <code>reject</code> function, if applicable</li>
+</ol>
+<p>We can make our <code>getDataFromServer</code> function asynchronous by wrapping it in a <code>Promise</code> as described:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">function</span> getDataFromServerAsync(data) {
+    <span style="color:#719e07">return</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+        getDataFromServer(data, <span style="color:#268bd2">function</span>(result, error) {
+            <span style="color:#586e75">// we&#39;ll assume that if error !== null,
+</span><span style="color:#586e75"></span>            <span style="color:#586e75">// something went wrong
+</span><span style="color:#586e75"></span>            <span style="color:#719e07">if</span> (error) {
+                reject(error);
+            } <span style="color:#719e07">else</span> {
+                resolve(data);
+            }
+        });
+    });
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>This allows us to chain the <code>Promise</code> returned.</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">getDataFromServerAsync(data)
+    .then(<span style="color:#268bd2">function</span>(result) {
+        <span style="color:#719e07">return</span> getDataFromServerAsync(result);
+    }).then(<span style="color:#268bd2">function</span>(result) {
+        <span style="color:#586e75">// do something with the result of the second query
+</span><span style="color:#586e75"></span>    })
+    .<span style="color:#719e07">catch</span>(<span style="color:#268bd2">function</span>(error) {
+        <span style="color:#586e75">// do something with any rejected call
+</span><span style="color:#586e75"></span>    });
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>And this is the ultimate benefit of Promises: rather than getting lost in callback after callback, we can simply chain a series of functions together.</p>
+<p>There is one noticeable problem with all that we’ve gone over, however. Despite the more logical structuring that is delivered by a <code>Promise</code>, having code that deals with values not directly inside the callback scope is still an issue.</p>
+<p>For example, I’ve seen newcomers to <code>Promise</code> write code similar to the following:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">let</span> resultVal;
+
+<span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve) {
+    setTimeout(<span style="color:#268bd2">function</span>() {
+        resolve(<span style="color:#2aa198">&#39;foo&#39;</span>);
+    }, <span style="color:#2aa198">1</span>);
+}).then(<span style="color:#268bd2">function</span>(val) {
+    resultVal <span style="color:#719e07">=</span> val;
+});
+
+console.log(<span style="color:#2aa198">&#39;resultVal&#39;</span>, resultVal);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>If you run this code, <code>resultVal</code> will print <code>undefined</code>. This is because the <code>console.log</code> statement actually gets run before the code in the <code>.then()</code> callback. This <em>may</em> be desirable if you know <code>resultVal</code> wouldn’t be used after some time, but it leaves your program in (what I would consider) an invalid state: your code is waiting on something to be set that it has no direct control over.</p>
+<p>There are ways around this, but there’s no easy, simple, or sure-fire way around it. Usually you just end up putting more code in the <code>.then()</code> callbacks and mutate some kind of state.</p>
+<p>The most straightforward way around this, however, is to use a new feature…</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="async--await"><code>async</code> / <code>await</code></h1>
+<p>A few years ago the latest JavaScript standards added <code>async</code> and <code>await</code> keywords. Now that we know how to use Promises, we can explore these keywords further.</p>
+<p><code>async</code> is a keyword used to designate a function that returns a <code>Promise</code>.</p>
+<p>Consider a simple function:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#268bd2">function</span> foo() {
+    <span style="color:#586e75">// note that there exists a function called `Promise.resolve`
+</span><span style="color:#586e75"></span>    <span style="color:#586e75">// which, when used, is equivalent to the following code
+</span><span style="color:#586e75"></span>    <span style="color:#719e07">return</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve) {
+        resolve(<span style="color:#2aa198">&#39;hello world&#39;</span>);
+    });
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>All this function does is just return <code>'hello world'</code> in a Promise.<!-- raw HTML omitted --><!-- raw HTML omitted -->2<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p>The equivalent code using <code>async</code> is:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">async <span style="color:#268bd2">function</span> foo() {
+    <span style="color:#719e07">return</span> <span style="color:#2aa198">&#39;hello world&#39;</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>You can then think of <code>async</code> as syntactic sugar that rewrites your function such that it returns a new <code>Promise</code>.</p>
+<p>The <code>await</code> keyword is a little different though, and it’s where the magic happens. A few examples ago we saw how if we tried logging <code>resultVal</code> it would be <code>undefined</code> because logging it would happen before the value was set. <code>await</code> lets you get around that.</p>
+<p>If we have a function that uses our <code>getDataFromServerAsync</code> function above, we can use it in an <code>async</code> function as such:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">async <span style="color:#268bd2">function</span> doSomething() {
+    <span style="color:#268bd2">const</span> data <span style="color:#719e07">=</span> await getDataFromServerAsync();
+    console.log(<span style="color:#2aa198">&#39;data&#39;</span>, data);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>data</code> will be set to whatever <code>getDataFromServerAsync</code> passes to the <code>resolve</code> function.</p>
+<p>On top of that, <code>await</code> will block, and the following <code>console.log</code> won’t be executed until <code>getDataFromServerAsync</code> is done.</p>
+<p>But what if <code>getDataFromServerAsync</code> is rejected? It will throw an exception! We can, of course, handle this in a <code>try/catch</code> block:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">async <span style="color:#268bd2">function</span> doSomething() {
+    <span style="color:#719e07">try</span> {
+        <span style="color:#268bd2">const</span> data <span style="color:#719e07">=</span> await rejectMe();
+        console.log(<span style="color:#2aa198">&#39;data&#39;</span>, data);
+    } <span style="color:#719e07">catch</span>(e) {
+        console.error(<span style="color:#2aa198">&#39;error thrown!&#39;</span>, e); <span style="color:#586e75">// =&gt; &#39;error thrown! rejected!&#39; will print
+</span><span style="color:#586e75"></span>    }
+}
+
+<span style="color:#268bd2">function</span> rejectMe() {
+    <span style="color:#719e07">return</span> <span style="color:#719e07">new</span> <span style="color:#b58900">Promise</span>(<span style="color:#268bd2">function</span>(resolve, reject) {
+        reject(<span style="color:#2aa198">&#39;rejected!&#39;</span>);
+    });
+}
+
+doSomething();
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>At this point you may find yourself thinking “Wow! This <code>async</code> stuff is great! Why would I ever want to write Promises again?” As I said it’s important to know that <code>async</code> and <code>await</code> are just syntactic sugar for Promises, and the <code>Promise</code> object has methods on it that can let you get more out of your <code>async</code> code, such as <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"><code>Promise.all</code></a>, which allows you to wait for an array of Promises to complete.</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>Promises are an important part of the JavaScript ecosystem. If you use libraries from NPM that do any kind of callouts to server, the odds are the API calls will return <code>Promise</code> objects (if it was written recently).</p>
+<p>Even though the new versions of JavaScript provide keywords that allow you to get around writing Promises directly in simple cases, it’s hopefully obvious by now that knowing how they work under the hood is still important!</p>
+<p>If you still feel confused about Promises after reading all this, I strongly recommend trying to write code that uses Promises. Experiment and see what you can do with them. Try using <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch">fetch</a>, for example, to get data from APIs. It’s something that may take some time to get down!</p>
+<hr>
+<p>I’m a software developer based in Cleveland, OH and I’m trying to start writing more! Follow me on <a href="https://dev.to/rfaulhaber">dev.to</a>, <a href="https://github.com/rfaulhaber">GitHub</a>, and <a href="https://twitter.com/ryan_faulhaber">Twitter</a>!</p>
+<p>This article was written using <a href="https://orgmode.org">Org Mode</a> for Emacs. If you would like the Org mode version of this article, see my <a href="https://github.com/rfaulhaber/writings">writings repo</a>, where the .org file will be published!</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="further-reading">Further reading</h1>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promises on MDN</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function">Async/Await on MDN</a></li>
+</ul>
+<h1 id="footnotes">Footnotes</h1>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->1<!-- raw HTML omitted --><!-- raw HTML omitted --> A brief explanation of named and anonymous functions:</p>
+<div class="highlight"><div style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#495050">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#586e75">// named, function declaration
+</span><span style="color:#586e75"></span><span style="color:#268bd2">function</span> foo() {}
+
+<span style="color:#586e75">// named function expression
+</span><span style="color:#586e75">// this is &#34;named&#34; because of &#34;function bar()&#34;,
+</span><span style="color:#586e75">// not because we&#39;re assigning it to a variable named &#34;foo&#34;
+</span><span style="color:#586e75">// doing this is optional and may make reading stack
+</span><span style="color:#586e75">// traces or writing a recursive function easier
+</span><span style="color:#586e75"></span><span style="color:#268bd2">const</span> foo <span style="color:#719e07">=</span> <span style="color:#268bd2">function</span> bar() {};
+
+<span style="color:#586e75">// the right hand side of this assignment is an
+</span><span style="color:#586e75">// anonymous function expression
+</span><span style="color:#586e75"></span><span style="color:#268bd2">const</span> foo <span style="color:#719e07">=</span> <span style="color:#268bd2">function</span>() {};
+
+<span style="color:#586e75">// arrow function, nearly equivalent to form above.
+</span><span style="color:#586e75">// arrow functions are always anonymous
+</span><span style="color:#586e75"></span><span style="color:#268bd2">const</span> foo <span style="color:#719e07">=</span> () =&gt; {};
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->2<!-- raw HTML omitted --><!-- raw HTML omitted --> This function’s body can also be written as:
+<code>return Promise.resolve('hello world');</code></p>
+
+</section>
+
+
+</body>
+
+<footer id="footer">
+	<p id="copyright">
+		
+	</p>
+</footer>
+
+</html>

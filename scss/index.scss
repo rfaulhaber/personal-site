@@ -1,0 +1,75 @@
+@import "colors/space.scss";
+@import "colors/sky.scss";
+@import "colors/earth.scss";
+@import "colors/sea.scss";
+@import "colors/forest.scss";
+
+body {
+  font-family: "Fira Mono", monospace;
+  text-rendering: geometricPrecision;
+  max-width: 720px;
+  margin: 0 auto;
+  padding-bottom: 1em;
+}
+
+pre {
+  border: unset;
+  overflow: hidden;
+  // TODO can this spacing be better?
+  margin: unset;
+  padding: unset;
+}
+
+table {
+  tbody {
+    td:first-child {
+      font-weight: bolder;
+    }
+  }
+
+  tr {
+    th {
+      font-size: 14px;
+    }
+  }
+}
+
+p {
+  margin: 20px 0px;
+}
+
+.subhead-list {
+  margin: unset;
+  padding: unset;
+
+  li {
+    display: inline-block;
+  }
+}
+
+.subhead-list-container {
+  height: 50%;
+
+  span,
+  ul {
+    display: inline-block;
+  }
+
+  span {
+    p {
+      margin: unset;
+    }
+  }
+}
+
+#title {
+  margin-bottom: 0 !important;
+}
+
+#date::before {
+  content: "";
+}
+
+div.chroma {
+  background-color: initial;
+}

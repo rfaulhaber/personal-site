@@ -1,0 +1,10 @@
+[submodule "themes/hugo-theme-basic"]
+	path = themes/hugo-theme-basic
+	url = https://github.com/siegerts/hugo-theme-basic.git
+[submodule "themes/hugo-theme-terminal"]
+	path = themes/hugo-theme-terminal
+	url = https://github.com/panr/hugo-theme-terminal.git
+[submodule "rfaulhaber.github.io"]
+	path = rfaulhaber.github.io
+	url = git@github.com:rfaulhaber/rfaulhaber.github.io.git
+	branch = master
