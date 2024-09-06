@@ -1,25 +1,24 @@
 baseURL = "/"
 languageCode = "en-us"
 title = "Ryan Faulhaber"
-theme = "duotone-theme-hugo"
+theme = "archie"
 enableEmoji = true
 description = "Site for Ryan Faulhaber"
-#googleAnalytics = "UA-23680267-3"
 
 [params]
-	theme = "sea"
     gtag = "UA-23680267-3"
+	mode="auto"
 
 
-[[menu.header]]
+[[menu.main]]
 name = "working with me"
 url = "working/"
 
-[[menu.header]]
+[[menu.main]]
 name = "resume"
 url = "resume/"
 
-[[menu.header]]
+[[menu.main]]
 name = "posts"
 url = "posts/"
 
@@ -37,8 +36,6 @@ lineNos = true
 codeFences = false
 lineNumbersInTable = true
 noClasses = true
-style = "solarized-dark"
-tabWidth = 4
 
 [markup.goldmark.renderer]
 unsafe= true

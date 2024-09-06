@@ -1,20 +1,20 @@
-<html class="{{ .Site.Params.theme }}-theme">
-    {{partial "head.html" .}}
-    <body lang="{{ .Site.LanguageCode }}">
-		<nav class="sidebar-nav">
-			{{ $currentPage := . }}
-			{{ range .Site.Menus.header }}
-            <a class="nav-item" title="{{.Title}}" href="{{.URL}}">{{.Name}}</a>
-			{{ end }}
-		</nav>
+<!DOCTYPE html>
+<html>
+	{{ partial "header.html" . }}
+	<body>
+		<div class="content">
+			{{ partial "head.html" . }}
 
-        <section id="main">
-            <div>
-                <h1 id="title">{{ .Site.Title }} {{ .Site.Params.TitleEmoji | emojify }}</h1>
-                <div>
-                  {{ .Content }}
-                </div>
-            </div>
-        </section>
-    </body>
+			<main class="list">
+				<div class="site-description">
+					{{- if isset .Site.Params "subtitle" -}}
+					<p>{{ .Site.Params.Subtitle | markdownify }}</p>
+					{{- end -}}
+				</div>
+				{{ .Content }}
+			</main>
+			{{ partial "footer.html" . }}
+		</div>
+
+	</body>
 </html>

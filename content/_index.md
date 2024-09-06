@@ -22,10 +22,7 @@ On top of that, I'm currently looking to contribute to open source projects and 
 | ------- | ------------------------------------------------------------------ |
 | Email   | [ryf@sent.as](mailto:ryf@sent.as)                                  |
 | GitHub  | [github.com/rfaulhaber](https://github.com/rfaulhaber)             |
-| GitLab  | [gitlab.com/rfaulhaber](https://gitlab.com/rfaulhaber)             |
 | dev.to  | [dev.to/rfaulhaber](https://dev.to/rfaulhaber)                     |
-| Twitter | [twitter.com/ryan_faulhaber](https://twitter.com/ryan%5Ffaulhaber) |
-| Keybase | [https://keybase.io/rfaulhaber](https://keybase.io/rfaulhaber)     |
 
 You may use my [GPG key](https://keybase.io/rfaulhaber/pgp%5Fkeys.asc?fingerprint=a2205925f3b6c5b96f26c3cb544650c5a306061b) as well when contacting me.
 
