@@ -1,6 +1,3 @@
-[submodule "public"]
-	path = public
-	url = git@github.com:rfaulhaber/rfaulhaber.github.io.git
 [submodule "themes/duotone-theme-hugo"]
 	path = themes/duotone-theme-hugo
 	url = git@github.com:rfaulhaber/duotone-theme-hugo.git

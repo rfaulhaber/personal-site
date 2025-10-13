@@ -3,24 +3,26 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs {
-            inherit system;
-          };
-          projectName = "personal-site";
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin"];
+      perSystem = {
+        self',
+        inputs',
+        pkgs,
+        system,
+        ...
+      }: let
+        projectName = "personal-site";
       in {
-        packages.default = self.packages.${system}.${projectName};
-        apps.${projectName} = flake-utils.lib.mkApp {drv = self.packages.${projectName};};
-
-        apps.default = self.apps.${system}.${projectName};
-
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [ hugo ];
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            hugo
+          ];
         };
-      }
-    );
+      };
+    };
 }
