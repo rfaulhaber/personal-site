@@ -1,8 +1,9 @@
 +++
 title = "You Should Try Nushell"
 author = ["Ryan Faulhaber"]
-tags = ["nushell"]
-draft = true
+date = 2024-09-06T14:02:00-04:00
+tags = ["nushell", "ATTACH"]
+draft = false
 +++
 
 Oh hey, I haven't written anything in almost three years! Hello again, world!
